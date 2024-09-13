@@ -382,7 +382,7 @@ void test_Rtp_DeSerialize_BadParams( void )
                                    0x87, 0x65, 0x43, 0x21,
                                    0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 };
     size_t length = sizeof( serializedPacket );
-    
+
     result = Rtp_DeSerialize( NULL,
                               serializedPacket,
                               length,
