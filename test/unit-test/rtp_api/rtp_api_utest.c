@@ -14,24 +14,13 @@
 
 /* ===========================  EXTERN VARIABLES  =========================== */
 
-#define MAX_PACKETS_IN_A_FRAME  512
-#define MAX_NALU_LENGTH         5 * 1024
 #define MAX_FRAME_LENGTH        10 * 1024
-#define MAX_PACKET_IN_A_FRAME   512
-
-#define VP8_PACKETS_ARR_LEN     10
-#define VP8_FRAME_BUF_LEN       32
-
 #define RTP_HEADER_MIN_LENGTH   12 /* No CSRC and no extension. */
 
 uint8_t buffer[ MAX_FRAME_LENGTH ];
-uint8_t packetsArray[ MAX_PACKET_IN_A_FRAME ];
 
 void setUp( void )
 {
-    memset( &( packetsArray[0] ),
-            0,
-            sizeof( packetsArray ) );
     memset( &( buffer[ 0 ] ),
             0,
             sizeof( buffer ) );
@@ -70,8 +59,8 @@ void test_Rtp_Serialize_Pass( void )
 {
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
-    RtpPacket_t packet = {0};
-    uint8_t buffer[ MAX_FRAME_LENGTH ] = {0};
+    RtpPacket_t packet = { 0 };
+    uint8_t buffer[ MAX_FRAME_LENGTH ] = { 0 };
     size_t length = MAX_FRAME_LENGTH;
 
     result = Rtp_Init( &ctx );
@@ -149,7 +138,7 @@ void test_Rtp_Serialize_WithCsrc( void )
 /*-----------------------------------------------------------*/
 
 /**
- * @brief Validate RTP_Serialize in case of flag as RTP_HEADER_FLAG_EXTENSION.
+ * @brief Validate RTP_Serialize in case of flag set as RTP_HEADER_FLAG_EXTENSION.
  */
 void test_Rtp_Serialize_Pass_FlagExtension( void )
 {
@@ -194,7 +183,7 @@ void test_Rtp_Serialize_Pass_FlagExtension( void )
 /*-----------------------------------------------------------*/
 
 /**
- * @brief Validate RTP_Serialize in case of flag as RTP_HEADER_FLAG_MARKER.
+ * @brief Validate RTP_Serialize in case of flag set as RTP_HEADER_FLAG_MARKER.
  */
 void test_Rtp_Serialize_Pass_FlagMarker( void )
 {
@@ -236,7 +225,7 @@ void test_Rtp_Serialize_Pass_FlagMarker( void )
 /*-----------------------------------------------------------*/
 
 /**
- * @brief Validate RTP_Serialize in case of flag as RTP_HEADER_FLAG_PADDING.
+ * @brief Validate RTP_Serialize in case of flag set as RTP_HEADER_FLAG_PADDING.
  */
 void test_Rtp_Serialize_Pass_FlagPadding( void )
 {
@@ -286,7 +275,10 @@ void test_Rtp_DeSerialize_Pass( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = { 0x80, 0x60, 0x04, 0xD2, 0x12, 0x34, 0x56, 0x78, 0x87, 0x65, 0x43, 0x21, 0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 };
+    uint8_t serializedPacket[] = { 0x80, 0x60, 0x04, 0xD2,
+                                   0x12, 0x34, 0x56, 0x78,
+                                   0x87, 0x65, 0x43, 0x21,
+                                   0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 };
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_Init( &ctx );
@@ -385,7 +377,10 @@ void test_Rtp_DeSerialize_BadParams( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = { 0x80, 0x60, 0x04, 0xD2, 0x12, 0x34, 0x56, 0x78, 0x87, 0x65, 0x43, 0x21, 0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 };
+    uint8_t serializedPacket[] = { 0x80, 0x60, 0x04, 0xD2,
+                                   0x12, 0x34, 0x56, 0x78,
+                                   0x87, 0x65, 0x43, 0x21,
+                                   0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 };
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_DeSerialize( NULL,
@@ -517,12 +512,10 @@ void test_Rtp_DeSerialize_Pass_NoExtensionNoPadding( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x80, 0x60, 0x04, 0xD2,
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 // Payload
-    };
+    uint8_t serializedPacket[] = {0x80, 0x60, 0x04, 0xD2,
+                                  0x12, 0x34, 0x56, 0x78,
+                                  0x87, 0x65, 0x43, 0x21,
+                                  0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 };
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_Init( &ctx );
@@ -577,14 +570,12 @@ void test_Rtp_DeSerialize_Pass_WithCsrc( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x82, 0x60, 0x04, 0xD2, // Header with CSRC count = 2
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x11, 0x22, 0x33, 0x44, // CSRC 1
-        0x55, 0x66, 0x77, 0x88, // CSRC 2
-        0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 // Payload
-    };
+    uint8_t serializedPacket[] = {0x82, 0x60, 0x04, 0xD2, // Header with CSRC count = 2
+                                  0x12, 0x34, 0x56, 0x78,
+                                  0x87, 0x65, 0x43, 0x21,
+                                  0x11, 0x22, 0x33, 0x44, // CSRC 1
+                                  0x55, 0x66, 0x77, 0x88, // CSRC 2
+                                  0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64 };
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_Init( &ctx );
@@ -623,15 +614,13 @@ void test_Rtp_DeSerialize_Pass_WithExtension( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x90, 0x60, 0x04, 0xD2, // Header with extension flag set
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x00, 0x00, 0x00, 0x02, // Extension header (profile = 0, length = 2)
-        0x11, 0x22, 0x33, 0x44, // Extension payload 1
-        0x55, 0x66, 0x77, 0x88, // Extension payload 2
-        0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x64 // Payload
-    };
+    uint8_t serializedPacket[] = {0x90, 0x60, 0x04, 0xD2, // Header with extension flag set
+                                  0x12, 0x34, 0x56, 0x78,
+                                  0x87, 0x65, 0x43, 0x21,
+                                  0x00, 0x00, 0x00, 0x02, // Extension header (profile = 0, length = 2)
+                                  0x11, 0x22, 0x33, 0x44, // Extension payload 1
+                                  0x55, 0x66, 0x77, 0x88, // Extension payload 2
+                                  0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x64};
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_Init( &ctx );
@@ -674,13 +663,11 @@ void test_Rtp_DeSerialize_Pass_WithPadding( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0xA0, 0x60, 0x04, 0xD2, // Header with padding flag set
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, // Payload
-        0x00, 0x00 // Padding bytes
-    };
+    uint8_t serializedPacket[] = { 0xA0, 0x60, 0x04, 0xD2, // Header with padding flag set
+                                   0x12, 0x34, 0x56, 0x78,
+                                   0x87, 0x65, 0x43, 0x21,
+                                   0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, // Payload
+                                   0x00, 0x00 };
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_Init( &ctx );
@@ -720,12 +707,10 @@ void test_Rtp_DeSerialize_MalformedPacket_WrongVersion( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x00, 0x60, 0x04, 0xD2, // Wrong version (0 instead of 2)
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x64 // Payload
-    };
+    uint8_t serializedPacket[] = { 0x00, 0x60, 0x04, 0xD2, // Wrong version (0 instead of 2)
+                                   0x12, 0x34, 0x56, 0x78,
+                                   0x87, 0x65, 0x43, 0x21,
+                                   0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x64 };
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_Init( &ctx );
@@ -753,11 +738,10 @@ void test_Rtp_DeSerialize_MalformedPacket_NoExtensionHeader( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x90, 0x60, 0x04, 0xD2, // Extension flag set
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21
-        // Extension header missing
+    uint8_t serializedPacket[] = { 0x90, 0x60, 0x04, 0xD2, // Extension flag set
+                                   0x12, 0x34, 0x56, 0x78,
+                                   0x87, 0x65, 0x43, 0x21
+                                   // Extension header missing
     };
     size_t length = sizeof( serializedPacket );
 
@@ -785,11 +769,10 @@ void test_Rtp_DeSerialize_InsufficientCsrcData( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x82, 0x60, 0x04, 0xD2, // Header with CSRC count = 2
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x11, 0x22, 0x33, 0x44  // Only 1 CSRC identifier (not enough for count = 2)
+    uint8_t serializedPacket[] = {0x82, 0x60, 0x04, 0xD2, // Header with CSRC count = 2
+                                  0x12, 0x34, 0x56, 0x78,
+                                  0x87, 0x65, 0x43, 0x21,
+                                  0x11, 0x22, 0x33, 0x44 // Only 1 CSRC identifier (not enough for count = 2)
     };
     size_t length = sizeof( serializedPacket );
 
@@ -817,12 +800,11 @@ void test_Rtp_DeSerialize_InsufficientExtensionPayloadData( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x90, 0x60, 0x04, 0xD2, // Extension flag set
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x00, 0x00, 0x00, 0x02, // Extension header (profile = 0, length = 2)
-        0x11, 0x22, 0x33, 0x44  // Only 1 extension payload word (not enough for length = 2)
+    uint8_t serializedPacket[] = {0x90, 0x60, 0x04, 0xD2, // Extension flag set
+                                  0x12, 0x34, 0x56, 0x78,
+                                  0x87, 0x65, 0x43, 0x21,
+                                  0x00, 0x00, 0x00, 0x02, // Extension header (profile = 0, length = 2)
+                                  0x11, 0x22, 0x33, 0x44 // Only 1 extension payload word (not enough for length = 2)
     };
     size_t length = sizeof( serializedPacket );
 
@@ -850,11 +832,9 @@ void test_Rtp_DeSerialize_NoPayload( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x80, 0x60, 0x04, 0xD2,
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21
-    };
+    uint8_t serializedPacket[] = {0x80, 0x60, 0x04, 0xD2,
+                                  0x12, 0x34, 0x56, 0x78,
+                                  0x87, 0x65, 0x43, 0x21};
     size_t length = sizeof( serializedPacket );
 
     result = Rtp_Init( &ctx );
@@ -886,11 +866,10 @@ void test_Rtp_DeSerialize_MarkerBitNotSet( void )
     RtpResult_t result;
     RtpContext_t ctx = { 0 };
     RtpPacket_t packet = { 0 };
-    uint8_t serializedPacket[] = {
-        0x80, 0x80, 0x04, 0xD2, // Marker bit not set
-        0x12, 0x34, 0x56, 0x78,
-        0x87, 0x65, 0x43, 0x21,
-        0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x64 // Payload
+    uint8_t serializedPacket[] = {0x80, 0x80, 0x04, 0xD2, // Marker bit not set
+                                  0x12, 0x34, 0x56, 0x78,
+                                  0x87, 0x65, 0x43, 0x21,
+                                  0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x64 // Payload
     };
     size_t length = sizeof( serializedPacket );
 
