@@ -467,12 +467,9 @@ void test_Rtp_Serialize_Pass_ZeroPayloadLength( void )
         /* Timestamp */
         0x12, 0x34, 0x56, 0x78,
         /* SSRC */
-        0x87, 0x65, 0x43, 0x21,
-        /* RTP payload - "hello world!" */
-        0x68, 0x65, 0x6C, 0x6C,
-        0x6F, 0x20, 0x77, 0x6F,
-        0x72, 0x6C, 0x64, 0x21
+        0x87, 0x65, 0x43, 0x21
     };
+    size_t expectedSerializedBufferLength = sizeof( expectedSerializedPacket );
 
     result = Rtp_Init( &( ctx ) );
 
@@ -494,7 +491,7 @@ void test_Rtp_Serialize_Pass_ZeroPayloadLength( void )
     TEST_ASSERT_EQUAL( RTP_RESULT_OK,
                        result );
 
-    TEST_ASSERT_EQUAL( 12,
+    TEST_ASSERT_EQUAL( expectedSerializedBufferLength,
                        bufferLength );
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY( expectedSerializedPacket,
@@ -936,6 +933,7 @@ void test_Rtp_Serialize_NoPayload( void )
         /* SSRC */
         0x87, 0x65, 0x43, 0x21
     };
+    size_t expectedSerializedBufferLength = sizeof( expectedSerializedPacket );
 
     result = Rtp_Init( &( ctx ) );
 
@@ -957,7 +955,7 @@ void test_Rtp_Serialize_NoPayload( void )
     TEST_ASSERT_EQUAL( RTP_RESULT_OK,
                        result );
 
-    TEST_ASSERT_EQUAL( 12,
+    TEST_ASSERT_EQUAL( expectedSerializedBufferLength,
                        bufferLength );
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY( expectedSerializedPacket,
@@ -985,7 +983,7 @@ void test_Rtp_DeSerialize_Pass_NoExtensionNoPadding( void )
         /* RTP payload */
         0x68, 0x65, 0x6C, 0x6C,
         0x6F, 0x20, 0x77, 0x6F,
-        0x72, 0x6C, 0x64
+        0x72, 0x6C, 0x64, 0X21
     };
 
     size_t length = sizeof( serializedPacket );
@@ -1023,11 +1021,11 @@ void test_Rtp_DeSerialize_Pass_NoExtensionNoPadding( void )
     TEST_ASSERT_EQUAL( 0x87654321,
                        packet.header.ssrc );
 
-    TEST_ASSERT_EQUAL_STRING_LEN( "hello world",
+    TEST_ASSERT_EQUAL_STRING_LEN( "hello world!",
                                   ( char * ) packet.pPayload,
                                   packet.payloadLength );
 
-    TEST_ASSERT_EQUAL( 11,
+    TEST_ASSERT_EQUAL( 12,
                        packet.payloadLength );
 }
 
@@ -1404,9 +1402,10 @@ void test_Rtp_DeSerialize_MarkerBitNotSet( void )
         /* Payload */
         0x68, 0x65, 0x6C, 0x6C,
         0x6F, 0x20, 0x77, 0x6F,
-        0x72, 0x6C, 0x64
+        0x72, 0x6C, 0x64, 0x21
     };
     size_t length = sizeof( serializedPacket );
+    size_t payloadLength = length - 12; /* 12 bytes for RTP header, 0 bytes for padding. */
 
     result = Rtp_Init( &( ctx ) );
 
@@ -1421,10 +1420,10 @@ void test_Rtp_DeSerialize_MarkerBitNotSet( void )
     TEST_ASSERT_EQUAL( RTP_RESULT_OK,
                        result );
 
-    TEST_ASSERT_EQUAL( 11,
+    TEST_ASSERT_EQUAL( payloadLength,
                        packet.payloadLength );
 
-    TEST_ASSERT_EQUAL_STRING_LEN( "hello world",
+    TEST_ASSERT_EQUAL_STRING_LEN( "hello world!",
                                   ( char * )packet.pPayload,
                                   packet.payloadLength );
 }
